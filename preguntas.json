@@ -149,8 +149,6 @@
     ],
     "respuestaCorrecta": 0
   },
-
-  // --- 30 nuevas, a continuación (todas bien redactadas, relacionadas y alternando básica/intermedia) ---
   {
     "pregunta": "¿Cuál es el objetivo de medir las líneas principales como VDD_MAIN?",
     "opciones": [
