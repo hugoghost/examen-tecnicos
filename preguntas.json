@@ -1,0 +1,154 @@
+[
+  {
+    "pregunta": "\u00bfQu\u00e9 es lo primero que se debe revisar cuando un iPhone no enciende?",
+    "opciones": [
+      "La pantalla LCD",
+      "La carga del software",
+      "El consumo en la fuente de poder",
+      "El Face ID"
+    ],
+    "respuestaCorrecta": 2
+  },
+  {
+    "pregunta": "\u00bfQu\u00e9 herramienta se usa para verificar si hay consumo en la placa?",
+    "opciones": [
+      "Soldador de aire",
+      "Mult\u00edmetro",
+      "Fuente de poder",
+      "Caut\u00edn"
+    ],
+    "respuestaCorrecta": 2
+  },
+  {
+    "pregunta": "Un iPhone conectado a la fuente marca 0.00A y cae el voltaje. \u00bfQu\u00e9 indica esto?",
+    "opciones": [
+      "Bater\u00eda descargada",
+      "Corto total en VDD_MAIN",
+      "Error de software",
+      "Face ID da\u00f1ado"
+    ],
+    "respuestaCorrecta": 1
+  },
+  {
+    "pregunta": "\u00bfCu\u00e1l es el siguiente paso si el equipo no enciende pero consume 0.10A estable?",
+    "opciones": [
+      "Reinstalar iOS",
+      "Revisar l\u00ednea PP_CPU",
+      "Revisar CPU",
+      "Usar tester USB"
+    ],
+    "respuestaCorrecta": 1
+  },
+  {
+    "pregunta": "\u00bfPor qu\u00e9 se desconectan los flexores al revisar un iPhone que no enciende?",
+    "opciones": [
+      "Para resetear el sistema",
+      "Para evitar da\u00f1os y detectar cortos",
+      "Para limpiar la placa",
+      "Para medir se\u00f1ales de imagen"
+    ],
+    "respuestaCorrecta": 1
+  },
+
+  {
+    "pregunta": "\u00bfEn qu\u00e9 escenario se revisa el consumo estable de 0.20A a 0.30A?",
+    "opciones": [
+      "Corto total",
+      "Falla en software",
+      "CPU trabajando sin imagen",
+      "Pantalla desconectada"
+    ],
+    "respuestaCorrecta": 2
+  },
+  {
+    "pregunta": "\u00bfCu\u00e1l es un consumo normal cuando el iPhone est\u00e1 encendiendo?",
+    "opciones": [
+      "0.00A",
+      "0.15A fijo",
+      "0.30A a 0.80A escalando",
+      "1.50A de golpe"
+    ],
+    "respuestaCorrecta": 2
+  },
+  {
+    "pregunta": "Si al presionar power hay consumo de 0.05A pero no sube, \u00bfqu\u00e9 componente podr\u00eda fallar?",
+    "opciones": [
+      "Pantalla LCD",
+      "CPU",
+      "Bater\u00eda",
+      "Power Button"
+    ],
+    "respuestaCorrecta": 3
+  },
+  {
+    "pregunta": "\u00bfQu\u00e9 indica un consumo inicial de 0.10A que sube a 0.20A y luego cae?",
+    "opciones": [
+      "Corto total",
+      "Falla en encendido por software",
+      "Protecci\u00f3n de la fuente",
+      "Inicio de imagen incompleto"
+    ],
+    "respuestaCorrecta": 3
+  },
+  {
+    "pregunta": "\u00bfCu\u00e1l herramienta es indispensable para ver consumo y voltaje al mismo tiempo?",
+    "opciones": [
+      "Tester USB",
+      "Fuente de poder",
+      "Mult\u00edmetro digital",
+      "Osciloscopio"
+    ],
+    "respuestaCorrecta": 0
+  },
+
+  {
+    "pregunta": "\u00bfCu\u00e1l l\u00ednea principal se suele revisar primero en cortos?",
+    "opciones": [
+      "PP_CPU",
+      "VDD_MAIN",
+      "PP_VCC_MAIN",
+      "PP_LCM"
+    ],
+    "respuestaCorrecta": 1
+  },
+  {
+    "pregunta": "\u00bfCu\u00e1ndo se considera que hay un corto total en una l\u00ednea?",
+    "opciones": [
+      "Al haber voltaje pero no consumo",
+      "Cuando hay consumo de 0.80A",
+      "Cuando hay ca\u00edda inmediata de voltaje",
+      "Cuando no prende la pantalla"
+    ],
+    "respuestaCorrecta": 2
+  },
+  {
+    "pregunta": "\u00bfQu\u00e9 herramienta permite ver si un componente se calienta en corto?",
+    "opciones": [
+      "C\u00e1mara t\u00e9rmica o alcohol",
+      "Mult\u00edmetro",
+      "Fuente de poder",
+      "Programador"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "\u00bfQu\u00e9 pasa si se mide una l\u00ednea con corto desde ambos extremos y marca 0\u00a0\u2126?",
+    "opciones": [
+      "No hay problema",
+      "Hay una pista abierta",
+      "Hay un corto directo",
+      "La l\u00ednea est\u00e1 en protecci\u00f3n"
+    ],
+    "respuestaCorrecta": 2
+  },
+  {
+    "pregunta": "\u00bfCu\u00e1ndo se puede decir que el CPU est\u00e1 funcionando sin imagen?",
+    "opciones": [
+      "Cuando hay backlight",
+      "Cuando hay vibraci\u00f3n pero sin consumo",
+      "Cuando hay consumo escalonado pero sin imagen",
+      "Cuando el WiFi enciende"
+    ],
+    "respuestaCorrecta": 2
+  }
+]

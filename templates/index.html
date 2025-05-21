@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Examen Técnico</title>
+    <meta charset="utf-8">
+    <script>
+        let preguntas = [];
+        let respuestas = [];
+        let tiempos = [];
+        let preguntaActual = 0;
+        let tiempoInicioPregunta = 0;
+        let tiempoTotalInicio = 0;
+        let tiempoTotal = 0;
+        let timer = null;
+
+        function mostrarFormDatos() {
+            document.getElementById('datos').style.display = 'block';
+            document.getElementById('examen').style.display = 'none';
+            document.getElementById('fin').style.display = 'none';
+        }
+
+        function mostrarPregunta() {
+            if (preguntaActual >= preguntas.length) {
+                terminarExamen();
+                return;
+            }
+            document.getElementById('examen').style.display = 'block';
+            document.getElementById('datos').style.display = 'none';
+            document.getElementById('fin').style.display = 'none';
+            let p = preguntas[preguntaActual];
+            let opcionesHtml = "";
+            for (let i = 0; i < p.opciones.length; i++) {
+                opcionesHtml += `<input type="radio" name="opcion" value="${i}" required> ${p.opciones[i]}<br>`;
+            }
+            document.getElementById('pregunta_txt').innerHTML = `<b>${preguntaActual + 1}. ${p.pregunta}</b><br>${opcionesHtml}`;
+            document.getElementById('pregunta_num').innerText = `Pregunta ${preguntaActual + 1} de ${preguntas.length}`;
+            document.getElementById('btn_next').disabled = true;
+
+            tiempoInicioPregunta = Date.now();
+            let tiempoRestante = 60;
+            document.getElementById('timer').innerText = tiempoRestante;
+            clearInterval(timer);
+            timer = setInterval(() => {
+                tiempoRestante--;
+                document.getElementById('timer').innerText = tiempoRestante;
+                if (tiempoRestante <= 0) {
+                    clearInterval(timer);
+                    guardarRespuestaTiempo(-1); // -1 = sin respuesta
+                }
+            }, 1000);
+
+            // Habilitar botón solo si selecciona opción
+            document.querySelectorAll('input[name="opcion"]').forEach(el => {
+                el.onclick = () => {
+                    document.getElementById('btn_next').disabled = false;
+                }
+            });
+        }
+
+        function guardarRespuestaTiempo(seleccionManual=null) {
+            clearInterval(timer);
+            let radios = document.getElementsByName("opcion");
+            let respuesta = -1;
+            if (seleccionManual === null) {
+                for (let i = 0; i < radios.length; i++) {
+                    if (radios[i].checked) respuesta = radios[i].value;
+                }
+            } else {
+                respuesta = seleccionManual;
+            }
+            respuestas.push(respuesta);
+            let tiempoPregunta = (Date.now() - tiempoInicioPregunta) / 1000.0;
+            tiempos.push(tiempoPregunta);
+            preguntaActual++;
+            mostrarPregunta();
+        }
+
+        function terminarExamen() {
+            tiempoTotal = (Date.now() - tiempoTotalInicio) / 1000.0;
+            document.getElementById('examen').style.display = 'none';
+            document.getElementById('fin').style.display = 'block';
+            // Enviar los datos al backend
+            fetch('/guardar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre: document.getElementById('nombre').value,
+                    correo: document.getElementById('correo').value,
+                    telefono: document.getElementById('telefono').value,
+                    respuestas: respuestas,
+                    tiempos: tiempos,
+                    tiempo_total: tiempoTotal
+                })
+            }).then(resp => resp.json()).then(data => {
+                document.getElementById('fin_msg').innerText = "¡Respuestas enviadas! Gracias por realizar el examen.";
+            });
+        }
+
+        function iniciarExamen() {
+            // Validar datos
+            if (!document.getElementById('nombre').value || !document.getElementById('correo').value || !document.getElementById('telefono').value) {
+                alert("Por favor completa todos los campos.");
+                return;
+            }
+            fetch('/get_preguntas')
+                .then(resp => resp.json())
+                .then(data => {
+                    preguntas = data;
+                    respuestas = [];
+                    tiempos = [];
+                    preguntaActual = 0;
+                    tiempoTotalInicio = Date.now();
+                    mostrarPregunta();
+                });
+        }
+    </script>
+</head>
+<body onload="mostrarFormDatos()">
+    <div id="datos" style="display:none;">
+        <h2>Examen Técnico - Datos del Técnico</h2>
+        <label>Nombre:</label><br>
+        <input type="text" id="nombre" required><br>
+        <label>Correo:</label><br>
+        <input type="email" id="correo" required><br>
+        <label>Teléfono:</label><br>
+        <input type="tel" id="telefono" required><br><br>
+        <button onclick="iniciarExamen()">Iniciar Examen</button>
+    </div>
+    <div id="examen" style="display:none;">
+        <div id="pregunta_num"></div>
+        <div id="pregunta_txt"></div>
+        <div>
+            Tiempo restante: <span id="timer">60</span> segundos
+        </div>
+        <br>
+        <button id="btn_next" onclick="guardarRespuestaTiempo()" disabled>Siguiente</button>
+    </div>
+    <div id="fin" style="display:none;">
+        <h2 id="fin_msg">¡Examen finalizado!</h2>
+    </div>
+</body>
+</html>
