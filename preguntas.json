@@ -1,154 +1,434 @@
 [
   {
-    "pregunta": "\u00bfQu\u00e9 es lo primero que se debe revisar cuando un iPhone no enciende?",
+    "pregunta": "¿Cuál es el primer paso antes de abrir un iPhone que no enciende?",
     "opciones": [
-      "La pantalla LCD",
-      "La carga del software",
-      "El consumo en la fuente de poder",
-      "El Face ID"
+      "Revisar el estado físico externo y los conectores",
+      "Medir voltaje en la placa madre",
+      "Quitar la batería inmediatamente",
+      "Desmontar la pantalla"
     ],
-    "respuestaCorrecta": 2
+    "respuestaCorrecta": 0
   },
   {
-    "pregunta": "\u00bfQu\u00e9 herramienta se usa para verificar si hay consumo en la placa?",
+    "pregunta": "¿Qué herramienta es ideal para detectar componentes sobrecalentados en la placa?",
     "opciones": [
-      "Soldador de aire",
-      "Mult\u00edmetro",
-      "Fuente de poder",
-      "Caut\u00edn"
+      "Cámara térmica o uso de alcohol",
+      "Multímetro en modo continuidad",
+      "Pinzas de precisión",
+      "Lámpara UV"
     ],
-    "respuestaCorrecta": 2
+    "respuestaCorrecta": 0
   },
   {
-    "pregunta": "Un iPhone conectado a la fuente marca 0.00A y cae el voltaje. \u00bfQu\u00e9 indica esto?",
+    "pregunta": "¿Por qué es importante probar con otro cargador antes de abrir el equipo?",
     "opciones": [
-      "Bater\u00eda descargada",
-      "Corto total en VDD_MAIN",
+      "Para descartar que el problema sea solo del cargador o cable",
+      "Porque el cargador puede resetear el iPhone",
+      "Porque así se activa el modo recuperación",
+      "Para borrar la memoria caché"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Qué indica una caída inmediata de voltaje y consumo a 0.00A en la fuente de poder?",
+    "opciones": [
+      "Corto total en la línea principal",
       "Error de software",
-      "Face ID da\u00f1ado"
+      "Flex de pantalla desconectado",
+      "Falla en altavoz"
     ],
-    "respuestaCorrecta": 1
+    "respuestaCorrecta": 0
   },
   {
-    "pregunta": "\u00bfCu\u00e1l es el siguiente paso si el equipo no enciende pero consume 0.10A estable?",
+    "pregunta": "¿Por qué se recomienda forzar reinicio antes de abrir un iPhone?",
     "opciones": [
-      "Reinstalar iOS",
-      "Revisar l\u00ednea PP_CPU",
-      "Revisar CPU",
-      "Usar tester USB"
+      "Para descartar bloqueos temporales de software",
+      "Para reiniciar la batería",
+      "Para limpiar la memoria RAM",
+      "Para calibrar el botón de encendido"
     ],
-    "respuestaCorrecta": 1
+    "respuestaCorrecta": 0
   },
   {
-    "pregunta": "\u00bfPor qu\u00e9 se desconectan los flexores al revisar un iPhone que no enciende?",
+    "pregunta": "¿Qué síntoma podría indicar daño en el circuito Tristar?",
     "opciones": [
-      "Para resetear el sistema",
-      "Para evitar da\u00f1os y detectar cortos",
+      "El iPhone no carga, ni enciende, ni responde al cable",
+      "Solo falla el micrófono",
+      "La cámara frontal no funciona",
+      "La vibración es intermitente"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Qué se debe hacer si se observa óxido en el conector de carga?",
+    "opciones": [
+      "Limpiar con alcohol isopropílico y cepillo suave",
+      "Cambiar la pantalla",
+      "Cambiar la batería sin limpiar",
+      "Ignorar el óxido y seguir con el diagnóstico"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Cuál es el valor de voltaje y corriente recomendado en la fuente de poder para diagnóstico en iPhone modernos?",
+    "opciones": [
+      "4.5V y 3A",
+      "12V y 1A",
+      "9V y 0.5A",
+      "3.7V y 2A"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "Si un iPhone vibra pero no muestra imagen ni sonido, ¿qué puede estar fallando?",
+    "opciones": [
+      "Circuito de backlight o display",
+      "Circuito de micrófono",
+      "Botón Home",
+      "Circuito WiFi"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Por qué es importante desconectar todos los flexores internos al revisar un iPhone apagado?",
+    "opciones": [
+      "Para aislar posibles periféricos en corto",
+      "Para ahorrar batería",
+      "Para mejorar el sonido",
+      "Para reiniciar la señal WiFi"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Qué acción se debe tomar si la placa base tiene rastros de humedad?",
+    "opciones": [
+      "Limpiar con alcohol isopropílico y secar completamente",
+      "Instalar una SIM nueva",
+      "Cambiar la carcasa",
+      "Reemplazar la pantalla"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Cuál es la función principal del USB Tester Power-Z en el diagnóstico?",
+    "opciones": [
+      "Medir el consumo de corriente al conectar el iPhone",
+      "Analizar la señal WiFi",
+      "Probar la cámara trasera",
+      "Actualizar el sistema operativo"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Qué puede indicar que el consumo sea normal pero el equipo sigue sin encender?",
+    "opciones": [
+      "Falla en el circuito de encendido o CPU",
+      "Problema en la cámara frontal",
+      "Daño en la SIM",
+      "Batería inflada"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Para qué se usa el microscopio en la revisión intermedia?",
+    "opciones": [
+      "Para detectar corrosión o soldaduras dañadas",
+      "Para ver mejor el código IMEI",
+      "Para limpiar la batería",
+      "Para comprobar la señal"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Qué hacer si al conectar la fuente el voltaje no cae y el consumo es 0.00A?",
+    "opciones": [
+      "Puede haber desconexión, daño en Tristar o placa no recibe energía",
+      "La batería está totalmente cargada",
+      "El altavoz está en corto",
+      "El cargador está defectuoso"
+    ],
+    "respuestaCorrecta": 0
+  },
+
+  // --- 30 nuevas, a continuación (todas bien redactadas, relacionadas y alternando básica/intermedia) ---
+  {
+    "pregunta": "¿Cuál es el objetivo de medir las líneas principales como VDD_MAIN?",
+    "opciones": [
+      "Verificar presencia de voltaje y ausencia de cortos",
+      "Identificar la versión de iOS",
+      "Revisar la señal de red",
+      "Ajustar el brillo de pantalla"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "Si al pulsar Power no hay respuesta pero hay consumo en fuente, ¿qué hacer?",
+    "opciones": [
+      "Revisar el circuito de encendido y líneas asociadas",
+      "Cambiar la batería",
+      "Instalar una SIM nueva",
+      "Cambiar el altavoz"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Por qué se recomienda el uso de cables y cargadores originales en diagnóstico?",
+    "opciones": [
+      "Para asegurar entrega adecuada de corriente y proteger los circuitos",
+      "Porque son más bonitos",
+      "Para cargar más rápido",
+      "Porque lo recomienda la marca"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Qué componente puede causar que un iPhone no cargue ni encienda si está dañado?",
+    "opciones": [
+      "Circuito Tristar",
+      "Micrófono",
+      "Lente de cámara",
+      "Bocina"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "Si el equipo prende sin imagen tras cambio de pantalla, ¿dónde buscar el problema?",
+    "opciones": [
+      "Circuito de backlight o display",
+      "Circuito de audio",
+      "SIM",
+      "Micrófono"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Qué herramienta se usa para identificar cortos visualmente en la placa?",
+    "opciones": [
+      "Cámara térmica",
+      "Multímetro en voltaje",
+      "Fuente de poder",
+      "Lupa"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Por qué es importante limpiar la zona afectada por humedad antes de seguir el diagnóstico?",
+    "opciones": [
+      "Para evitar corrosión y daños mayores",
+      "Para ahorrar tiempo",
+      "Para bajar la temperatura",
+      "Para activar la SIM"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Qué puede indicar un consumo superior a 1A al conectar el iPhone a la fuente?",
+    "opciones": [
+      "Posible corto parcial en la placa",
+      "Cargador defectuoso",
+      "Batería sin carga",
+      "Pantalla rota"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Por qué se mide el voltaje en diferentes puntos de la placa?",
+    "opciones": [
+      "Para ubicar zonas sin suministro eléctrico y posibles cortos",
+      "Para conocer la marca del componente",
+      "Para ajustar el audio",
+      "Para probar el botón de volumen"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Cuál es el efecto de tener un periférico en corto conectado a la placa?",
+    "opciones": [
+      "Puede impedir el encendido del equipo",
+      "Solo reduce la batería",
+      "Baja la calidad del sonido",
+      "Aumenta la señal WiFi"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Qué se debe hacer antes de reemplazar un componente sospechoso?",
+    "opciones": [
+      "Confirmar la falla midiendo y revisando el circuito relacionado",
+      "Cambiarlo directamente",
+      "Reiniciar el equipo",
+      "Cambiar la pantalla"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "Si hay consumo escalonado pero sin imagen ni sonido, ¿qué analizar?",
+    "opciones": [
+      "Circuito de backlight y CPU",
+      "Micrófono",
+      "Bocina",
+      "Antena WiFi"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Por qué se recomienda registrar los valores de consumo y voltaje durante el diagnóstico?",
+    "opciones": [
+      "Para tener referencia en futuras reparaciones",
+      "Para hacer reportes a la marca",
+      "Para cambiar la batería",
+      "Para ajustar el brillo"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Qué hacer si tras todos los pasos el iPhone sigue sin encender y sin consumo?",
+    "opciones": [
+      "Consultar esquemáticos y realizar diagnóstico avanzado",
+      "Cambiar la carcasa",
+      "Instalar una SIM nueva",
+      "Cambiar la bocina"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Para qué sirve desconectar los flexores de periféricos uno a uno?",
+    "opciones": [
+      "Para identificar si alguno causa corto y bloquea el encendido",
       "Para limpiar la placa",
-      "Para medir se\u00f1ales de imagen"
-    ],
-    "respuestaCorrecta": 1
-  },
-
-  {
-    "pregunta": "\u00bfEn qu\u00e9 escenario se revisa el consumo estable de 0.20A a 0.30A?",
-    "opciones": [
-      "Corto total",
-      "Falla en software",
-      "CPU trabajando sin imagen",
-      "Pantalla desconectada"
-    ],
-    "respuestaCorrecta": 2
-  },
-  {
-    "pregunta": "\u00bfCu\u00e1l es un consumo normal cuando el iPhone est\u00e1 encendiendo?",
-    "opciones": [
-      "0.00A",
-      "0.15A fijo",
-      "0.30A a 0.80A escalando",
-      "1.50A de golpe"
-    ],
-    "respuestaCorrecta": 2
-  },
-  {
-    "pregunta": "Si al presionar power hay consumo de 0.05A pero no sube, \u00bfqu\u00e9 componente podr\u00eda fallar?",
-    "opciones": [
-      "Pantalla LCD",
-      "CPU",
-      "Bater\u00eda",
-      "Power Button"
-    ],
-    "respuestaCorrecta": 3
-  },
-  {
-    "pregunta": "\u00bfQu\u00e9 indica un consumo inicial de 0.10A que sube a 0.20A y luego cae?",
-    "opciones": [
-      "Corto total",
-      "Falla en encendido por software",
-      "Protecci\u00f3n de la fuente",
-      "Inicio de imagen incompleto"
-    ],
-    "respuestaCorrecta": 3
-  },
-  {
-    "pregunta": "\u00bfCu\u00e1l herramienta es indispensable para ver consumo y voltaje al mismo tiempo?",
-    "opciones": [
-      "Tester USB",
-      "Fuente de poder",
-      "Mult\u00edmetro digital",
-      "Osciloscopio"
-    ],
-    "respuestaCorrecta": 0
-  },
-
-  {
-    "pregunta": "\u00bfCu\u00e1l l\u00ednea principal se suele revisar primero en cortos?",
-    "opciones": [
-      "PP_CPU",
-      "VDD_MAIN",
-      "PP_VCC_MAIN",
-      "PP_LCM"
-    ],
-    "respuestaCorrecta": 1
-  },
-  {
-    "pregunta": "\u00bfCu\u00e1ndo se considera que hay un corto total en una l\u00ednea?",
-    "opciones": [
-      "Al haber voltaje pero no consumo",
-      "Cuando hay consumo de 0.80A",
-      "Cuando hay ca\u00edda inmediata de voltaje",
-      "Cuando no prende la pantalla"
-    ],
-    "respuestaCorrecta": 2
-  },
-  {
-    "pregunta": "\u00bfQu\u00e9 herramienta permite ver si un componente se calienta en corto?",
-    "opciones": [
-      "C\u00e1mara t\u00e9rmica o alcohol",
-      "Mult\u00edmetro",
-      "Fuente de poder",
-      "Programador"
+      "Para ahorrar energía",
+      "Para calibrar el botón de encendido"
     ],
     "respuestaCorrecta": 0
   },
   {
-    "pregunta": "\u00bfQu\u00e9 pasa si se mide una l\u00ednea con corto desde ambos extremos y marca 0\u00a0\u2126?",
+    "pregunta": "¿Qué debes revisar si el equipo no carga nada al conectar fuente o cargador?",
     "opciones": [
-      "No hay problema",
-      "Hay una pista abierta",
-      "Hay un corto directo",
-      "La l\u00ednea est\u00e1 en protecci\u00f3n"
+      "Circuito Tristar o componentes de gestión de carga",
+      "Altavoz",
+      "Cámara trasera",
+      "Antena"
     ],
-    "respuestaCorrecta": 2
+    "respuestaCorrecta": 0
   },
   {
-    "pregunta": "\u00bfCu\u00e1ndo se puede decir que el CPU est\u00e1 funcionando sin imagen?",
+    "pregunta": "¿Por qué es útil comparar los consumos en la fuente con los valores estándar?",
     "opciones": [
-      "Cuando hay backlight",
-      "Cuando hay vibraci\u00f3n pero sin consumo",
-      "Cuando hay consumo escalonado pero sin imagen",
-      "Cuando el WiFi enciende"
+      "Para identificar anomalías y detectar fallas comunes",
+      "Para calibrar la fuente",
+      "Para ajustar la pantalla",
+      "Para cambiar la carcasa"
     ],
-    "respuestaCorrecta": 2
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Qué acción tomar si el consumo es muy bajo y no varía al pulsar Power?",
+    "opciones": [
+      "Revisar la línea de encendido y batería",
+      "Cambiar la pantalla",
+      "Probar con otra SIM",
+      "Reinstalar el sistema operativo"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Por qué desconectar la batería antes de trabajar sobre la placa?",
+    "opciones": [
+      "Para evitar cortocircuitos y daños adicionales",
+      "Para limpiar mejor",
+      "Para probar el botón Home",
+      "Para actualizar el sistema"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "Si un técnico observa sulfato en componentes, ¿qué debe hacer?",
+    "opciones": [
+      "Limpiar con alcohol isopropílico y revisar si afecta circuitos críticos",
+      "Reinstalar el sistema",
+      "Cambiar el altavoz",
+      "Cerrar el equipo y entregar"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Para qué sirve forzar reinicio por botones en un iPhone?",
+    "opciones": [
+      "Para descartar fallas de software que bloqueen el encendido",
+      "Para limpiar la memoria RAM",
+      "Para probar la vibración",
+      "Para resetear la red WiFi"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Por qué es importante hacer inspección visual bajo lupa o microscopio?",
+    "opciones": [
+      "Para detectar daños, corrosión o pistas rotas difíciles de ver a simple vista",
+      "Para calibrar la pantalla",
+      "Para ver el número de serie",
+      "Para cambiar la batería"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Qué indica que el equipo vibre y consuma energía pero no muestre imagen?",
+    "opciones": [
+      "Que el CPU está trabajando pero falla el circuito de imagen o backlight",
+      "Que la SIM está dañada",
+      "Que hay problema de audio",
+      "Que la batería no tiene carga"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Cuál es la finalidad de consultar esquemáticos en diagnóstico avanzado?",
+    "opciones": [
+      "Ubicar puntos de prueba y rutas de alimentación para análisis profundo",
+      "Actualizar el firmware",
+      "Resetear la batería",
+      "Reparar la cámara"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Por qué es importante medir en ambos extremos de una línea sospechosa de corto?",
+    "opciones": [
+      "Para determinar si el corto es local o afecta toda la línea",
+      "Para limpiar la placa",
+      "Para probar el audio",
+      "Para actualizar el sistema"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Qué puede indicar un consumo de 0.80A al conectar la fuente?",
+    "opciones": [
+      "Que hay un corto parcial o consumo elevado en la placa",
+      "Que el equipo está en modo DFU",
+      "Que la batería está nueva",
+      "Que la señal WiFi es débil"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Por qué probar la placa sin periféricos conectados?",
+    "opciones": [
+      "Para aislar la causa de la falla y descartar cortos en accesorios",
+      "Para limpiar mejor",
+      "Para cargar más rápido",
+      "Para cambiar la carcasa"
+    ],
+    "respuestaCorrecta": 0
+  },
+  {
+    "pregunta": "¿Qué indica que el voltaje se mantenga pero el consumo sea 0.00A en fuente?",
+    "opciones": [
+      "Que la placa no está arrancando, posible daño en Tristar o circuitos de arranque",
+      "Que la batería está cargada",
+      "Que la pantalla está apagada",
+      "Que la SIM no está instalada"
+    ],
+    "respuestaCorrecta": 0
   }
 ]
