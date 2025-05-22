@@ -1,46 +1,42 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Examen Técnico</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f8f8f8; }
-        .container { max-width: 500px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #ccc; padding: 20px;}
-        .num { font-size: 1.2em; color: #214C7A; }
-        .pregunta { margin: 18px 0 12px; font-size: 1.1em;}
-        .opcion { margin-bottom: 8px;}
-        button, input[type=submit] {
-            background: #214C7A;
-            color: #fff; font-weight: bold;
-            border: none; border-radius: 8px;
-            padding: 10px 0; margin-top: 10px; cursor: pointer;
-            width: 100%; transition: background .2s;
-        }
-        button:hover, input[type=submit]:hover { background: #1976d2; }
-    </style>
-    <script>
-        let startTime;
-        window.onload = () => { startTime = Date.now(); }
-        function beforeSubmit() {
-            let elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-            document.getElementById('tiempo').value = elapsed;
-            return true;
-        }
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pregunta {{ num }} / {{ total }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script>
+    let tiempo = 60;
+    function updateTimer() {
+      if (tiempo <= 0) {
+        document.getElementById('form-examen').submit();
+      } else {
+        document.getElementById('timer').innerText = tiempo;
+        tiempo--;
+        setTimeout(updateTimer, 1000);
+      }
+    }
+    function grabarTiempo() {
+      document.getElementById('input-tiempo').value = 60 - tiempo;
+    }
+    window.onload = updateTimer;
+  </script>
 </head>
 <body>
-    <div class="container">
-        <div class="num">Pregunta {{ num }} de {{ total }}</div>
-        <form method="POST" onsubmit="return beforeSubmit();">
-            <div class="pregunta">{{ pregunta.pregunta }}</div>
-            {% for opcion in pregunta.opciones %}
-            <div class="opcion">
-                <input type="radio" name="respuesta" value="{{ opcion }}" required> {{ opcion }}
-            </div>
-            {% endfor %}
-            <input type="hidden" name="tiempo" id="tiempo" value="0">
-            <input type="submit" value="Siguiente">
-        </form>
-    </div>
+  <div class="container">
+    <h2>Pregunta {{ num }} de {{ total }}</h2>
+    <div id="timer">60</div>
+    <form id="form-examen" method="POST" onsubmit="grabarTiempo()">
+      <p>{{ pregunta.pregunta }}</p>
+      {% for opcion in pregunta.opciones %}
+        <label>
+          <input type="radio" name="respuesta" value="{{ opcion }}" required>
+          {{ opcion }}
+        </label><br>
+      {% endfor %}
+      <input type="hidden" name="tiempo" id="input-tiempo" value="60">
+      <button type="submit">Siguiente</button>
+    </form>
+  </div>
 </body>
 </html>

@@ -1,56 +1,43 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Resultados de {{ nombre }}</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f8f8f8; }
-        .container { max-width: 900px; margin: 30px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #ccc; padding: 20px;}
-        h2 { color: #214C7A; }
-        table { width: 100%; border-collapse: collapse; background: #fff; margin-top: 20px;}
-        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd;}
-        th { background: #f2f2f2; }
-        .ok { color: green; font-weight: bold; }
-        .fail { color: red; font-weight: bold; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Detalle Técnico</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h2>Resultados de {{ nombre }}</h2>
-        <p><b>Correo:</b> {{ correo }}</p>
-        <p><b>Teléfono:</b> {{ telefono }}</p>
-        <p><b>Tiempo total:</b> {{ tiempo_total }} segundos</p>
-        <p><b>IP:</b> {{ ip }}</p>
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Pregunta</th>
-                    <th>Tu Respuesta</th>
-                    <th>Respuesta Correcta</th>
-                    <th>Correcto</th>
-                    <th>Tiempo (s)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for idx, d in enumerate(detalles) %}
-                <tr>
-                    <td>{{ idx + 1 }}</td>
-                    <td>{{ d.pregunta }}</td>
-                    <td>{{ d.respuesta_usuario }}</td>
-                    <td>{{ d.respuesta_correcta }}</td>
-                    <td>
-                        {% if d.acierto %}
-                        <span class="ok">&#10004;</span>
-                        {% else %}
-                        <span class="fail">&#10008;</span>
-                        {% endif %}
-                    </td>
-                    <td>{{ d.tiempo }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+  <div class="container">
+    <h1>Resultados de {{ nombre }}</h1>
+    <p><strong>Correo:</strong> {{ correo }}</p>
+    <p><strong>Teléfono:</strong> {{ telefono }}</p>
+    <p><strong>Tiempo total:</strong> {{ tiempo_total }} s</p>
+    <p><strong>IP:</strong> {{ ip }}</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Pregunta</th>
+          <th>Tu Respuesta</th>
+          <th>Correcta</th>
+          <th>✓/✗</th>
+          <th>Tiempo (s)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in detalles %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ d.pregunta }}</td>
+            <td>{{ d.respuesta_usuario }}</td>
+            <td>{{ d.respuesta_correcta }}</td>
+            <td>{% if d.acierto %}✔{% else %}✘{% endif %}</td>
+            <td>{{ d.tiempo }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </body>
 </html>

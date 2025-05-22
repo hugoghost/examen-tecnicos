@@ -1,44 +1,40 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Resultados Técnicos</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f8f8f8; }
-        .container { max-width: 900px; margin: 30px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #ccc; padding: 20px;}
-        table { width: 100%; border-collapse: collapse; background: #fff; }
-        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd;}
-        th { background: #f2f2f2; }
-        a { color: #5b21b6; font-weight: bold; text-decoration: underline;}
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Resultados Técnicos</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h2>Resultados Técnicos</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Correo</th>
-                    <th>Teléfono</th>
-                    <th>Tiempo Total (s)</th>
-                    <th>IP</th>
-                    <th>Ver Detalles</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for r in resultados %}
-                <tr>
-                    <td>{{ r[1] }}</td>
-                    <td>{{ r[2] }}</td>
-                    <td>{{ r[3] }}</td>
-                    <td>{{ r[4] }}</td>
-                    <td>{{ r[5] }}</td>
-                    <td><a href="{{ url_for('resultado_tecnico', res_id=r[0]) }}">Ver</a></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+  <div class="container">
+    <h1>Resultados Técnicos</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Correo</th>
+          <th>Teléfono</th>
+          <th>Tiempo Total (s)</th>
+          <th>IP</th>
+          <th>Ver Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in resultados %}
+          <tr>
+            <td>{{ r[1] }}</td>
+            <td>{{ r[2] }}</td>
+            <td>{{ r[3] }}</td>
+            <td>{{ r[4] }}</td>
+            <td>{{ r[5] }}</td>
+            <td>
+              <a href="{{ url_for('resultados_tecnico', res_id=r[0]) }}">Ver</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </body>
 </html>
