@@ -2,7 +2,7 @@ import json
 import os
 import sqlite3
 import random
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
@@ -22,145 +22,96 @@ def crear_db():
                 respuestas TEXT,
                 tiempos TEXT,
                 tiempo_total REAL,
-                ip TEXT,
-                fecha TEXT
+                ip TEXT
             )
         """)
         conn.commit()
         conn.close()
 
+crear_db()
+
 def cargar_preguntas():
     with open(PREGUNTAS_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
 
-@app.route("/", methods=["GET"])
+@app.route("/", methods=["GET", "POST"])
 def index():
+    if request.method == "POST":
+        nombre = request.form["nombre"]
+        correo = request.form["correo"]
+        telefono = request.form["telefono"]
+        return redirect(url_for("examen", nombre=nombre, correo=correo, telefono=telefono))
     return render_template("index.html")
 
-@app.route("/get_preguntas", methods=["GET"])
-def get_preguntas():
-    preguntas = cargar_preguntas()
-    preguntas_aleatorias = random.sample(preguntas, 15)  # Solo 15 preguntas aleatorias
-
-    # Aleatoriza las opciones de cada pregunta y ajusta el índice de la respuesta correcta
-    for pregunta in preguntas_aleatorias:
-        opciones = pregunta["opciones"]
-        idx_correcta = pregunta["respuestaCorrecta"]
-        # Crear lista de tuplas (indice original, opcion)
-        opciones_con_indices = list(enumerate(opciones))
-        # Mezclar las opciones
-        random.shuffle(opciones_con_indices)
-        # Crear nueva lista de opciones y buscar el nuevo índice de la correcta
-        nuevas_opciones = [opcion for _, opcion in opciones_con_indices]
-        nuevo_idx_correcta = [i for i, (orig_idx, _) in enumerate(opciones_con_indices) if orig_idx == idx_correcta][0]
-        pregunta["opciones"] = nuevas_opciones
-        pregunta["respuestaCorrecta"] = nuevo_idx_correcta
-
-    return jsonify(preguntas_aleatorias)
-
-from datetime import datetime
-
-@app.route("/guardar", methods=["POST"])
-def guardar():
-    data = request.get_json()
-    nombre = data.get("nombre")
-    correo = data.get("correo")
-    telefono = data.get("telefono")
-    respuestas = data.get("respuestas")
-    tiempos = data.get("tiempos")
-    tiempo_total = data.get("tiempo_total")
-    ip = request.remote_addr
-    fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    conn = sqlite3.connect(DB_FILE)
-    c = conn.cursor()
-    c.execute("INSERT INTO respuestas (nombre, correo, telefono, respuestas, tiempos, tiempo_total, ip, fecha) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-              (nombre, correo, telefono, json.dumps(respuestas, ensure_ascii=False), json.dumps(tiempos), tiempo_total, ip, fecha))
-    conn.commit()
-    conn.close()
-    return jsonify({"status": "ok"})
-
-@app.route("/resultados")
-def resultados():
-    preguntas = cargar_preguntas()
-    conn = sqlite3.connect(DB_FILE)
-    c = conn.cursor()
-    c.execute("SELECT nombre, correo, telefono, respuestas, tiempo_total, fecha FROM respuestas")
-    filas = c.fetchall()
-    conn.close()
-    resultados = []
-    for nombre, correo, telefono, respuestas_json, tiempo_total, fecha in filas:
-        try:
-            respuestas = json.loads(respuestas_json)
-        except:
-            respuestas = []
-        # Compara con respuestas correctas:
-        puntaje = 0
-        for i, r in enumerate(respuestas):
-            if i < len(preguntas):
-                if r == preguntas[i]["respuestaCorrecta"]:
-                    puntaje += 1
-        resultados.append({
-            "nombre": nombre,
-            "correo": correo,
-            "puntaje": puntaje,
-            "tiempo_total": tiempo_total if tiempo_total else 0,
-            "fecha": fecha
-        })
-    return render_template("resultados.html", resultados=resultados)
-
-@app.route("/resultados/tecnico")
-def resultado_tecnico():
+@app.route("/examen")
+def examen():
     nombre = request.args.get("nombre")
     correo = request.args.get("correo")
+    telefono = request.args.get("telefono")
+    preguntas = cargar_preguntas()
+    preguntas_aleatorias = random.sample(preguntas, 15)
+    for p in preguntas_aleatorias:
+        random.shuffle(p["opciones"])
+    return render_template("examen.html", preguntas=preguntas_aleatorias, nombre=nombre, correo=correo, telefono=telefono)
+
+@app.route("/guardar_respuestas", methods=["POST"])
+def guardar_respuestas():
+    datos = request.form
+    nombre = datos.get("nombre")
+    correo = datos.get("correo")
+    telefono = datos.get("telefono")
+    respuestas = json.dumps([datos.get(f"respuesta_{i}") for i in range(15)], ensure_ascii=False)
+    tiempos = json.dumps([datos.get(f"tiempo_{i}") for i in range(15)], ensure_ascii=False)
+    tiempo_total = datos.get("tiempo_total")
+    ip = request.remote_addr
+
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute("SELECT nombre, correo, telefono, respuestas, tiempos, tiempo_total, fecha FROM respuestas WHERE nombre=? AND correo=?", (nombre, correo))
-    fila = c.fetchone()
+    c.execute("""
+        INSERT INTO respuestas (nombre, correo, telefono, respuestas, tiempos, tiempo_total, ip)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (nombre, correo, telefono, respuestas, tiempos, tiempo_total, ip))
+    conn.commit()
     conn.close()
-    preguntas_banco = cargar_preguntas()
+    return redirect(url_for("gracias"))
 
-    if not fila:
-        return f"No se encontró el técnico {nombre} ({correo})"
+@app.route("/gracias")
+def gracias():
+    return render_template("gracias.html")
 
-    nombre, correo, telefono, respuestas_str, tiempos_str, tiempo_total, fecha = fila
-    respuestas = json.loads(respuestas_str)
-    tiempos = json.loads(tiempos_str)
-    puntaje = 0
-    for i, r in enumerate(respuestas):
-        if i < len(preguntas_banco) and r == preguntas_banco[i]["respuestaCorrecta"]:
-            puntaje += 1
+# Nueva página de resultados general
+@app.route("/resultados", methods=["GET"])
+def resultados():
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute("SELECT DISTINCT nombre FROM respuestas")
+    tecnicos = [row[0] for row in c.fetchall()]
+    conn.close()
+    return render_template("resultados.html", tecnicos=tecnicos)
 
-    return render_template("detalle_tecnico.html",
-                           nombre=nombre,
-                           correo=correo,
-                           puntaje=puntaje,
-                           tiempo_total=tiempo_total if tiempo_total else 0,
-                           fecha=fecha,
-                           preguntas=preguntas_banco[:len(respuestas)],
-                           respuestas=respuestas,
-                           tiempos=tiempos)
+# Resultados individuales por técnico
+@app.route("/resultados/tecnico", methods=["GET"])
+def resultados_tecnico():
+    nombre = request.args.get("nombre")
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute("""
+        SELECT id, nombre, correo, telefono, respuestas, tiempos, tiempo_total, ip 
+        FROM respuestas WHERE nombre = ?
+    """, (nombre,))
+    resultados = c.fetchall()
+    conn.close()
+    return render_template("resultados_tecnico.html", resultados=resultados, nombre=nombre)
 
-    html = f"<h2>Detalle de {nombre} ({correo})</h2>"
-    html += f"<p><b>Teléfono:</b> {telefono}<br><b>IP:</b> {ip}</p>"
-    html += "<table border=1><tr><th>#</th><th>Pregunta</th><th>Respuesta</th><th>Correcta</th><th>Tiempo (s)</th></tr>"
-    for i, r in enumerate(respuestas):
-        if i < len(preguntas_banco):
-            pregunta = preguntas_banco[i]
-            correcta = pregunta["opciones"][pregunta["respuestaCorrecta"]]
-            try:
-                resp_idx = int(r)
-                respuesta = pregunta["opciones"][resp_idx] if resp_idx != -1 else "Sin respuesta"
-                es_correcta = "✅" if resp_idx == pregunta["respuestaCorrecta"] else "❌"
-            except:
-                respuesta = "Sin respuesta"
-                es_correcta = ""
-            tpo = tiempos[i] if i < len(tiempos) else ""
-            html += f"<tr><td>{i+1}</td><td>{pregunta['pregunta']}</td><td>{respuesta}</td><td>{correcta} {es_correcta}</td><td>{tpo:.2f}</td></tr>"
-    html += f"<tr><td colspan='4'><b>Tiempo total</b></td><td><b>{tiempo_total:.2f} s</b></td></tr>"
-    html += "</table>"
-    html += "<br><a href='/resultados'>⬅ Volver a la lista</a>"
-    return html
+# Borrar todos los resultados (opcional/admin)
+@app.route("/borrar_resultados", methods=["POST"])
+def borrar_resultados():
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute("DELETE FROM respuestas")
+    conn.commit()
+    conn.close()
+    return redirect(url_for("resultados"))
 
 if __name__ == "__main__":
-    crear_db()
     app.run(host="0.0.0.0", port=5000)
