@@ -6,199 +6,87 @@
     <title>Examen Técnico</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #f7f7f7;
-            margin: 0; padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f7f7f7 url('{{ url_for('static', filename='logo.png') }}') no-repeat center center fixed;
+            background-size: 300px;
+            margin: 0;
         }
         .container {
-            max-width: 600px;
-            background: white;
-            margin: 2rem auto;
-            padding: 1.5rem 2rem;
-            border-radius: 16px;
-            box-shadow: 0 0 16px #aaa2;
+            background: rgba(255,255,255,0.98);
+            max-width: 440px;
+            margin: 50px auto 0 auto;
+            padding: 32px 24px 16px 24px;
+            border-radius: 18px;
+            box-shadow: 0 3px 18px rgba(0,0,0,0.08);
+            position: relative;
         }
-        h1, h2 {
+        .logo-box {
             text-align: center;
-            color: #17496e;
+            margin-bottom: 24px;
         }
-        label {
+        .logo-box img {
+            width: 80px;
+            margin-bottom: 12px;
+        }
+        h1 {
+            text-align: center;
+            color: #214C7A;
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+        }
+        input[type="text"], input[type="email"], input[type="tel"] {
+            padding: 10px;
+            border-radius: 7px;
+            border: 1px solid #b5b5b5;
+            font-size: 1rem;
+            background: #f8fafd;
+            outline: none;
+        }
+        input[type="submit"] {
+            background: #214C7A;
+            color: #fff;
             font-weight: bold;
-            display: block;
-            margin-top: 1rem;
-        }
-        input, button, select {
-            width: 100%;
-            padding: 0.7em;
-            margin: 0.4em 0;
-            font-size: 1em;
+            border: none;
             border-radius: 8px;
-            border: 1px solid #aaa;
-            box-sizing: border-box;
-        }
-        .pregunta {
-            margin: 2em 0 1.5em 0;
-        }
-        .opcion {
-            background: #f2f2f2;
-            padding: 0.8em;
-            border-radius: 8px;
-            margin: 0.6em 0;
+            padding: 12px 0;
             cursor: pointer;
-            border: 1px solid #ccc;
-            transition: background 0.2s;
+            margin-top: 10px;
+            transition: background .2s;
         }
-        .opcion.selected {
-            background: #d0ebfd;
-            border-color: #1461b3;
+        input[type="submit"]:hover {
+            background: #1976d2;
         }
-        .timer {
-            text-align: right;
-            color: #aa3333;
-            font-weight: bold;
-        }
-        .progreso {
-            text-align: center;
-            color: #666;
-            margin-bottom: 1em;
-        }
-        @media (max-width: 700px) {
+        @media (max-width: 600px) {
             .container {
-                max-width: 98vw;
-                padding: 1em 0.3em;
-                border-radius: 8px;
+                margin: 18px;
+                padding: 20px 7px 10px 7px;
             }
-            h1 { font-size: 1.2em; }
+            .logo-box img {
+                width: 60px;
+            }
+            h1 {
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>Examen Técnico</h1>
-    <form id="datosForm">
-        <label>Nombre:</label>
-        <input type="text" id="nombre" required autocomplete="off">
-        <label>Correo:</label>
-        <input type="email" id="correo" required autocomplete="off">
-        <label>Teléfono:</label>
-        <input type="tel" id="telefono" required autocomplete="off">
-        <button type="submit">Comenzar Examen</button>
-    </form>
-    <div id="examen" style="display:none;">
-        <div class="progreso" id="progreso"></div>
-        <div class="timer" id="timer"></div>
-        <div class="pregunta" id="pregunta"></div>
-        <div id="opciones"></div>
-        <button id="siguiente" style="display:none;">Siguiente</button>
+    <div class="container">
+        <div class="logo-box">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo Examen Técnico">
+        </div>
+        <h1>Examen Técnico</h1>
+        <form method="POST">
+            <input type="text" name="nombre" placeholder="Nombre completo" required>
+            <input type="email" name="correo" placeholder="Correo electrónico" required>
+            <input type="tel" name="telefono" placeholder="Teléfono (opcional)">
+            <input type="submit" value="Comenzar Examen">
+        </form>
     </div>
-    <div id="final" style="display:none; text-align:center;">
-        <h2>¡Examen finalizado!</h2>
-        <p>Gracias por responder.</p>
-    </div>
-</div>
-
-<script>
-let preguntas = [];
-let respuestas = [];
-let tiempos = [];
-let tiempoInicio = 0, tiempoTotal = 0;
-let indice = 0, timer = null, tiempoLimite = 60;
-let nombre, correo, telefono;
-
-document.getElementById("datosForm").onsubmit = async function(e) {
-    e.preventDefault();
-    nombre = document.getElementById("nombre").value.trim();
-    correo = document.getElementById("correo").value.trim();
-    telefono = document.getElementById("telefono").value.trim();
-    if (!nombre || !correo || !telefono) return;
-    document.getElementById("datosForm").style.display = "none";
-    await cargarPreguntas();
-    iniciarExamen();
-};
-
-async function cargarPreguntas() {
-    let res = await fetch("/get_preguntas");
-    preguntas = await res.json();
-}
-
-function iniciarExamen() {
-    respuestas = [];
-    tiempos = [];
-    indice = 0;
-    document.getElementById("examen").style.display = "block";
-    mostrarPregunta();
-}
-
-function mostrarPregunta() {
-    if (indice >= preguntas.length) return finalizarExamen();
-    document.getElementById("progreso").innerText = `Pregunta ${indice+1} de ${preguntas.length}`;
-    let p = preguntas[indice];
-    document.getElementById("pregunta").innerText = p.pregunta;
-    let opcionesHtml = "";
-    p.opciones.forEach((op, i) => {
-        opcionesHtml += `<div class="opcion" onclick="seleccionarOpcion(${i})" id="opcion${i}">${op}</div>`;
-    });
-    document.getElementById("opciones").innerHTML = opcionesHtml;
-    document.getElementById("siguiente").style.display = "none";
-    tiempoInicio = Date.now();
-    iniciarTimer();
-}
-
-function seleccionarOpcion(opcion) {
-    let opciones = document.getElementsByClassName("opcion");
-    for (let op of opciones) op.classList.remove("selected");
-    document.getElementById("opcion"+opcion).classList.add("selected");
-    document.getElementById("siguiente").style.display = "block";
-}
-
-document.getElementById("siguiente").onclick = function() {
-    guardarRespuesta();
-};
-
-function guardarRespuesta() {
-    let opciones = document.getElementsByClassName("opcion");
-    let seleccion = -1;
-    for (let i=0; i<opciones.length; i++) {
-        if (opciones[i].classList.contains("selected")) seleccion = i;
-    }
-    respuestas.push(seleccion);
-    let tpo = (Date.now() - tiempoInicio)/1000;
-    tiempos.push(tpo);
-    clearInterval(timer);
-    indice++;
-    mostrarPregunta();
-}
-
-function iniciarTimer() {
-    let t = tiempoLimite;
-    document.getElementById("timer").innerText = `Tiempo restante: ${t}s`;
-    timer = setInterval(() => {
-        t--;
-        document.getElementById("timer").innerText = `Tiempo restante: ${t}s`;
-        if (t <= 0) {
-            clearInterval(timer);
-            respuestas.push(-1);
-            tiempos.push(tiempoLimite);
-            indice++;
-            mostrarPregunta();
-        }
-    }, 1000);
-}
-
-function finalizarExamen() {
-    tiempoTotal = tiempos.reduce((a,b)=>a+b,0);
-    document.getElementById("examen").style.display = "none";
-    document.getElementById("final").style.display = "block";
-    fetch("/guardar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            nombre, correo, telefono,
-            respuestas, tiempos,
-            tiempo_total: tiempoTotal
-        })
-    });
-}
-</script>
 </body>
 </html>
