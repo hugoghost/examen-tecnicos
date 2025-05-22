@@ -56,30 +56,33 @@ def examen():
 
 @app.route("/guardar_respuestas", methods=["POST"])
 def guardar_respuestas():
-    datos = request.form
-    nombre = datos.get("nombre")
-    correo = datos.get("correo")
-    telefono = datos.get("telefono")
-    respuestas = json.dumps([datos.get(f"respuesta_{i}") for i in range(15)], ensure_ascii=False)
-    tiempos = json.dumps([datos.get(f"tiempo_{i}") for i in range(15)], ensure_ascii=False)
-    tiempo_total = datos.get("tiempo_total")
-    ip = request.remote_addr
+    try:
+        datos = request.form
+        nombre = datos.get("nombre")
+        correo = datos.get("correo")
+        telefono = datos.get("telefono")
+        respuestas = json.dumps([datos.get(f"respuesta_{i}") for i in range(15)])
+        tiempos = json.dumps([datos.get(f"tiempo_{i}") for i in range(15)])
+        tiempo_total = datos.get("tiempo_total")
+        ip = request.remote_addr
 
-    conn = sqlite3.connect(DB_FILE)
-    c = conn.cursor()
-    c.execute("""
-        INSERT INTO respuestas (nombre, correo, telefono, respuestas, tiempos, tiempo_total, ip)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    """, (nombre, correo, telefono, respuestas, tiempos, tiempo_total, ip))
-    conn.commit()
-    conn.close()
-    return redirect(url_for("gracias"))
+        conn = sqlite3.connect(DB_FILE)
+        c = conn.cursor()
+        c.execute("""
+            INSERT INTO respuestas (nombre, correo, telefono, respuestas, tiempos, tiempo_total, ip)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (nombre, correo, telefono, respuestas, tiempos, tiempo_total, ip))
+        conn.commit()
+        conn.close()
+        return redirect(url_for("gracias"))
+    except Exception as e:
+        return f"Error al guardar respuestas: {str(e)}"
 
 @app.route("/gracias")
 def gracias():
     return render_template("gracias.html")
 
-# Nueva página de resultados general
+# Resultados generales
 @app.route("/resultados", methods=["GET"])
 def resultados():
     conn = sqlite3.connect(DB_FILE)
@@ -96,14 +99,14 @@ def resultados_tecnico():
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
     c.execute("""
-        SELECT id, nombre, correo, telefono, respuestas, tiempos, tiempo_total, ip 
+        SELECT id, nombre, correo, telefono, respuestas, tiempos, tiempo_total, ip
         FROM respuestas WHERE nombre = ?
     """, (nombre,))
     resultados = c.fetchall()
     conn.close()
     return render_template("resultados_tecnico.html", resultados=resultados, nombre=nombre)
 
-# Borrar todos los resultados (opcional/admin)
+# Borrar todos los resultados
 @app.route("/borrar_resultados", methods=["POST"])
 def borrar_resultados():
     conn = sqlite3.connect(DB_FILE)
