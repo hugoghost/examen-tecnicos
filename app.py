@@ -22,7 +22,8 @@ def crear_db():
                 respuestas TEXT,
                 tiempos TEXT,
                 tiempo_total REAL,
-                ip TEXT
+                ip TEXT,
+                fecha TEXT
             )
         """)
         conn.commit()
@@ -57,6 +58,8 @@ def get_preguntas():
 
     return jsonify(preguntas_aleatorias)
 
+from datetime import datetime
+
 @app.route("/guardar", methods=["POST"])
 def guardar():
     data = request.get_json()
@@ -67,27 +70,43 @@ def guardar():
     tiempos = data.get("tiempos")
     tiempo_total = data.get("tiempo_total")
     ip = request.remote_addr
+    fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute("INSERT INTO respuestas (nombre, correo, telefono, respuestas, tiempos, tiempo_total, ip) VALUES (?, ?, ?, ?, ?, ?, ?)",
-              (nombre, correo, telefono, json.dumps(respuestas, ensure_ascii=False), json.dumps(tiempos), tiempo_total, ip))
+    c.execute("INSERT INTO respuestas (nombre, correo, telefono, respuestas, tiempos, tiempo_total, ip, fecha) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+              (nombre, correo, telefono, json.dumps(respuestas, ensure_ascii=False), json.dumps(tiempos), tiempo_total, ip, fecha))
     conn.commit()
     conn.close()
     return jsonify({"status": "ok"})
 
 @app.route("/resultados")
 def resultados():
+    preguntas = cargar_preguntas()
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute("SELECT nombre, correo, telefono, ip FROM respuestas")
+    c.execute("SELECT nombre, correo, telefono, respuestas, tiempo_total, fecha FROM respuestas")
     filas = c.fetchall()
     conn.close()
-    html = "<h2>Lista de técnicos</h2><ul>"
-    for nombre, correo, telefono, ip in filas:
-        html += f"<li><a href='/resultados/tecnico?nombre={nombre}&correo={correo}'>{nombre} ({correo})</a> - Tel: {telefono} - IP: {ip}</li>"
-    html += "</ul>"
-    html += "<br><hr><p>Selecciona un técnico para ver el detalle de sus respuestas.</p>"
-    return html
+    resultados = []
+    for nombre, correo, telefono, respuestas_json, tiempo_total, fecha in filas:
+        try:
+            respuestas = json.loads(respuestas_json)
+        except:
+            respuestas = []
+        # Compara con respuestas correctas:
+        puntaje = 0
+        for i, r in enumerate(respuestas):
+            if i < len(preguntas):
+                if r == preguntas[i]["respuestaCorrecta"]:
+                    puntaje += 1
+        resultados.append({
+            "nombre": nombre,
+            "correo": correo,
+            "puntaje": puntaje,
+            "tiempo_total": tiempo_total if tiempo_total else 0,
+            "fecha": fecha
+        })
+    return render_template("resultados.html", resultados=resultados)
 
 @app.route("/resultados/tecnico")
 def resultado_tecnico():
@@ -95,7 +114,7 @@ def resultado_tecnico():
     correo = request.args.get("correo")
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute("SELECT nombre, correo, telefono, respuestas, tiempos, tiempo_total, ip FROM respuestas WHERE nombre=? AND correo=?", (nombre, correo))
+    c.execute("SELECT nombre, correo, telefono, respuestas, tiempos, tiempo_total, fecha FROM respuestas WHERE nombre=? AND correo=?", (nombre, correo))
     fila = c.fetchone()
     conn.close()
     preguntas_banco = cargar_preguntas()
@@ -103,9 +122,23 @@ def resultado_tecnico():
     if not fila:
         return f"No se encontró el técnico {nombre} ({correo})"
 
-    nombre, correo, telefono, respuestas_str, tiempos_str, tiempo_total, ip = fila
+    nombre, correo, telefono, respuestas_str, tiempos_str, tiempo_total, fecha = fila
     respuestas = json.loads(respuestas_str)
     tiempos = json.loads(tiempos_str)
+    puntaje = 0
+    for i, r in enumerate(respuestas):
+        if i < len(preguntas_banco) and r == preguntas_banco[i]["respuestaCorrecta"]:
+            puntaje += 1
+
+    return render_template("detalle_tecnico.html",
+                           nombre=nombre,
+                           correo=correo,
+                           puntaje=puntaje,
+                           tiempo_total=tiempo_total if tiempo_total else 0,
+                           fecha=fecha,
+                           preguntas=preguntas_banco[:len(respuestas)],
+                           respuestas=respuestas,
+                           tiempos=tiempos)
 
     html = f"<h2>Detalle de {nombre} ({correo})</h2>"
     html += f"<p><b>Teléfono:</b> {telefono}<br><b>IP:</b> {ip}</p>"

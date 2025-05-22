@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle de Evaluación</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f5f7fa url('/static/logo.png') no-repeat center center fixed;
+            background-size: 300px auto;
+            margin: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: rgba(255,255,255,0.97);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+            border-radius: 15px;
+            padding: 35px 24px 24px 24px;
+            position: relative;
+        }
+        .logo {
+            display: block;
+            margin: 0 auto 20px auto;
+            width: 120px;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.06));
+        }
+        h2 {
+            text-align: center;
+            color: #16487a;
+            font-size: 2em;
+        }
+        .datos {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #444;
+        }
+        .puntaje-alto { color: #217a36; font-weight:bold; }
+        .puntaje-medio { color: #b59d04; font-weight:bold; }
+        .puntaje-bajo { color: #b61d1d; font-weight:bold; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 22px 0 8px 0;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        th, td {
+            padding: 10px 7px;
+            text-align: left;
+            border-bottom: 1px solid #e1e7f2;
+        }
+        th {
+            background: #16487a;
+            color: #fff;
+        }
+        tr:nth-child(even) { background: #f3f8fd; }
+        .correcta { background: #c8f7c5; }
+        .incorrecta { background: #ffd6d6; }
+        .tiempo { text-align: right; color: #5b72b1; }
+        @media (max-width: 600px) {
+            .container { padding: 10px 2vw; }
+            th, td { padding: 6px 2px; font-size: 0.98em; }
+            .logo { width: 80px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
+        <h2>Detalle de Evaluación</h2>
+        <div class="datos">
+            <b>Nombre:</b> {{ nombre }}<br>
+            <b>Correo:</b> {{ correo }}<br>
+            <b>Puntaje:</b>
+            {% if puntaje >= 13 %}
+                <span class="puntaje-alto">{{ puntaje }}/15</span>
+            {% elif puntaje >= 8 %}
+                <span class="puntaje-medio">{{ puntaje }}/15</span>
+            {% else %}
+                <span class="puntaje-bajo">{{ puntaje }}/15</span>
+            {% endif %}
+            <br>
+            <b>Tiempo total:</b> {{ '%.1f'|format(tiempo_total/60) }} min<br>
+            <b>Fecha:</b> {{ fecha if fecha else '' }}
+        </div>
+        <table>
+            <tr>
+                <th>#</th>
+                <th>Pregunta</th>
+                <th>Respuesta dada</th>
+                <th>Correcta</th>
+                <th>Tiempo (s)</th>
+            </tr>
+            {% for i, p in enumerate(preguntas) %}
+            <tr class="{% if respuestas[i] == p['respuestaCorrecta'] %}correcta{% else %}incorrecta{% endif %}">
+                <td>{{ i+1 }}</td>
+                <td>{{ p['pregunta'] }}</td>
+                <td>
+                  {% if respuestas[i] is not none and respuestas[i] != -1 %}
+                    {{ p['opciones'][respuestas[i]] }}
+                  {% else %}
+                    Sin respuesta
+                  {% endif %}
+                </td>
+                <td>{{ p['opciones'][p['respuestaCorrecta']] }}</td>
+                <td class="tiempo">
+                  {% if tiempos and i < tiempos|length %}{{ '%.1f'|format(tiempos[i]) }}{% else %}-{% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <div style="text-align:center;margin-top:10px;">
+            <a href="{{ url_for('resultados') }}" style="color:#16487a;">⬅ Volver a la lista</a>
+        </div>
+    </div>
+</body>
+</html>
