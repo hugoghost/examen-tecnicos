@@ -21,7 +21,8 @@ def crear_db():
                 telefono TEXT,
                 respuestas TEXT,
                 tiempos TEXT,
-                tiempo_total REAL
+                tiempo_total REAL,
+                ip TEXT
             )
         """)
         conn.commit()
@@ -38,7 +39,22 @@ def index():
 @app.route("/get_preguntas", methods=["GET"])
 def get_preguntas():
     preguntas = cargar_preguntas()
-    preguntas_aleatorias = random.sample(preguntas, len(preguntas))
+    preguntas_aleatorias = random.sample(preguntas, 15)  # Solo 15 preguntas aleatorias
+
+    # Aleatoriza las opciones de cada pregunta y ajusta el índice de la respuesta correcta
+    for pregunta in preguntas_aleatorias:
+        opciones = pregunta["opciones"]
+        idx_correcta = pregunta["respuestaCorrecta"]
+        # Crear lista de tuplas (indice original, opcion)
+        opciones_con_indices = list(enumerate(opciones))
+        # Mezclar las opciones
+        random.shuffle(opciones_con_indices)
+        # Crear nueva lista de opciones y buscar el nuevo índice de la correcta
+        nuevas_opciones = [opcion for _, opcion in opciones_con_indices]
+        nuevo_idx_correcta = [i for i, (orig_idx, _) in enumerate(opciones_con_indices) if orig_idx == idx_correcta][0]
+        pregunta["opciones"] = nuevas_opciones
+        pregunta["respuestaCorrecta"] = nuevo_idx_correcta
+
     return jsonify(preguntas_aleatorias)
 
 @app.route("/guardar", methods=["POST"])
@@ -50,10 +66,11 @@ def guardar():
     respuestas = data.get("respuestas")
     tiempos = data.get("tiempos")
     tiempo_total = data.get("tiempo_total")
+    ip = request.remote_addr
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute("INSERT INTO respuestas (nombre, correo, telefono, respuestas, tiempos, tiempo_total) VALUES (?, ?, ?, ?, ?, ?)",
-              (nombre, correo, telefono, json.dumps(respuestas, ensure_ascii=False), json.dumps(tiempos), tiempo_total))
+    c.execute("INSERT INTO respuestas (nombre, correo, telefono, respuestas, tiempos, tiempo_total, ip) VALUES (?, ?, ?, ?, ?, ?, ?)",
+              (nombre, correo, telefono, json.dumps(respuestas, ensure_ascii=False), json.dumps(tiempos), tiempo_total, ip))
     conn.commit()
     conn.close()
     return jsonify({"status": "ok"})
@@ -62,12 +79,12 @@ def guardar():
 def resultados():
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute("SELECT nombre, correo FROM respuestas")
+    c.execute("SELECT nombre, correo, telefono, ip FROM respuestas")
     filas = c.fetchall()
     conn.close()
     html = "<h2>Lista de técnicos</h2><ul>"
-    for nombre, correo in filas:
-        html += f"<li><a href='/resultados/tecnico?nombre={nombre}&correo={correo}'>{nombre} ({correo})</a></li>"
+    for nombre, correo, telefono, ip in filas:
+        html += f"<li><a href='/resultados/tecnico?nombre={nombre}&correo={correo}'>{nombre} ({correo})</a> - Tel: {telefono} - IP: {ip}</li>"
     html += "</ul>"
     html += "<br><hr><p>Selecciona un técnico para ver el detalle de sus respuestas.</p>"
     return html
@@ -78,7 +95,7 @@ def resultado_tecnico():
     correo = request.args.get("correo")
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute("SELECT nombre, correo, telefono, respuestas, tiempos, tiempo_total FROM respuestas WHERE nombre=? AND correo=?", (nombre, correo))
+    c.execute("SELECT nombre, correo, telefono, respuestas, tiempos, tiempo_total, ip FROM respuestas WHERE nombre=? AND correo=?", (nombre, correo))
     fila = c.fetchone()
     conn.close()
     preguntas_banco = cargar_preguntas()
@@ -86,12 +103,12 @@ def resultado_tecnico():
     if not fila:
         return f"No se encontró el técnico {nombre} ({correo})"
 
-    nombre, correo, telefono, respuestas_str, tiempos_str, tiempo_total = fila
+    nombre, correo, telefono, respuestas_str, tiempos_str, tiempo_total, ip = fila
     respuestas = json.loads(respuestas_str)
     tiempos = json.loads(tiempos_str)
 
     html = f"<h2>Detalle de {nombre} ({correo})</h2>"
-    html += f"<p><b>Teléfono:</b> {telefono}</p>"
+    html += f"<p><b>Teléfono:</b> {telefono}<br><b>IP:</b> {ip}</p>"
     html += "<table border=1><tr><th>#</th><th>Pregunta</th><th>Respuesta</th><th>Correcta</th><th>Tiempo (s)</th></tr>"
     for i, r in enumerate(respuestas):
         if i < len(preguntas_banco):
