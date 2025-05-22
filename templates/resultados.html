@@ -3,32 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <title>Resultados Técnicos</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { font-family: Arial, sans-serif; background: #f9f9f9; margin: 0; }
-        .container { max-width: 480px; margin: 60px auto; background: #fff; border-radius: 16px; box-shadow: 0 3px 16px rgba(0,0,0,0.08); padding: 32px 20px; position: relative;}
-        h1 { text-align: center; color: #265385; margin-bottom: 40px;}
-        .tecnicos-list { list-style: none; padding: 0;}
-        .tecnicos-list li { margin: 16px 0;}
-        .tecnicos-list a { display: block; background: #f0f6fa; color: #265385; padding: 16px; border-radius: 10px; text-decoration: none; font-size: 1.1em; transition: background 0.2s;}
-        .tecnicos-list a:hover { background: #e2eaf4;}
-        .logo-bg {position: absolute; top: 10px; right: 10px; opacity: 0.08; width: 120px;}
-        @media (max-width: 600px) {.container {padding: 18px 6px;}}
+        body { font-family: Arial, sans-serif; background: #f8f8f8; }
+        .container { max-width: 900px; margin: 30px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #ccc; padding: 20px;}
+        table { width: 100%; border-collapse: collapse; background: #fff; }
+        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd;}
+        th { background: #f2f2f2; }
+        a { color: #5b21b6; font-weight: bold; text-decoration: underline;}
     </style>
 </head>
 <body>
     <div class="container">
-        <img src="{{ url_for('static', filename='logo.png') }}" class="logo-bg" alt="Logo">
-        <h1>Resultados Técnicos</h1>
-        <ul class="tecnicos-list">
-            {% for tecnico in tecnicos %}
-                <li>
-                    <a href="{{ url_for('resultados_tecnico') }}?nombre={{ tecnico }}">{{ tecnico }}</a>
-                </li>
-            {% else %}
-                <li>No hay técnicos registrados aún.</li>
-            {% endfor %}
-        </ul>
+        <h2>Resultados Técnicos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Tiempo Total (s)</th>
+                    <th>IP</th>
+                    <th>Ver Detalles</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in resultados %}
+                <tr>
+                    <td>{{ r[1] }}</td>
+                    <td>{{ r[2] }}</td>
+                    <td>{{ r[3] }}</td>
+                    <td>{{ r[4] }}</td>
+                    <td>{{ r[5] }}</td>
+                    <td><a href="{{ url_for('resultado_tecnico', res_id=r[0]) }}">Ver</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </body>
 </html>

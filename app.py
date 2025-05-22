@@ -1,11 +1,11 @@
-import json
 import os
 import sqlite3
+import json
 import random
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 
 app = Flask(__name__)
-
+app.secret_key = 'clave_super_secreta_y_larga'
 DB_FILE = "respuestas_tecnicos.db"
 PREGUNTAS_FILE = "preguntas.json"
 
@@ -14,16 +14,16 @@ def crear_db():
         conn = sqlite3.connect(DB_FILE)
         c = conn.cursor()
         c.execute("""
-            CREATE TABLE respuestas (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nombre TEXT,
-                correo TEXT,
-                telefono TEXT,
-                respuestas TEXT,
-                tiempos TEXT,
-                tiempo_total REAL,
-                ip TEXT
-            )
+        CREATE TABLE respuestas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT,
+            correo TEXT,
+            telefono TEXT,
+            respuestas TEXT,
+            tiempos TEXT,
+            tiempo_total REAL,
+            ip TEXT
+        )
         """)
         conn.commit()
         conn.close()
@@ -37,84 +37,117 @@ def cargar_preguntas():
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
-        nombre = request.form["nombre"]
-        correo = request.form["correo"]
-        telefono = request.form["telefono"]
-        return redirect(url_for("examen", nombre=nombre, correo=correo, telefono=telefono))
+        session.clear()
+        session["nombre"] = request.form["nombre"]
+        session["correo"] = request.form["correo"]
+        session["telefono"] = request.form["telefono"]
+        # Tomar 15 preguntas aleatorias y barajar sus opciones
+        preguntas = random.sample(cargar_preguntas(), 15)
+        for pregunta in preguntas:
+            opciones = pregunta["opciones"].copy()
+            random.shuffle(opciones)
+            pregunta["opciones"] = opciones
+        session["preguntas"] = preguntas
+        session["respuestas"] = []
+        session["tiempos"] = []
+        session["tiempo_total"] = 0
+        session["actual"] = 0
+        return redirect(url_for("examen"))
     return render_template("index.html")
 
-@app.route("/examen")
+@app.route("/examen", methods=["GET", "POST"])
 def examen():
-    nombre = request.args.get("nombre")
-    correo = request.args.get("correo")
-    telefono = request.args.get("telefono")
-    preguntas = cargar_preguntas()
-    preguntas_aleatorias = random.sample(preguntas, 15)
-    for p in preguntas_aleatorias:
-        random.shuffle(p["opciones"])
-    return render_template("examen.html", preguntas=preguntas_aleatorias, nombre=nombre, correo=correo, telefono=telefono)
+    if "nombre" not in session or "preguntas" not in session:
+        return redirect(url_for("index"))
+    preguntas = session["preguntas"]
+    actual = session["actual"]
+    if request.method == "POST":
+        respuesta = request.form.get("respuesta")
+        tiempo = request.form.get("tiempo")
+        session["respuestas"].append(respuesta)
+        session["tiempos"].append(tiempo)
+        session["tiempo_total"] += float(tiempo)
+        session["actual"] += 1
+        actual = session["actual"]
 
-@app.route("/guardar_respuestas", methods=["POST"])
-def guardar_respuestas():
-    try:
-        datos = request.form
-        nombre = datos.get("nombre")
-        correo = datos.get("correo")
-        telefono = datos.get("telefono")
-        respuestas = json.dumps([datos.get(f"respuesta_{i}") for i in range(15)])
-        tiempos = json.dumps([datos.get(f"tiempo_{i}") for i in range(15)])
-        tiempo_total = datos.get("tiempo_total")
-        ip = request.remote_addr
-
+    if actual < len(preguntas):
+        pregunta = preguntas[actual]
+        num = actual + 1
+        total = len(preguntas)
+        return render_template("examen.html", pregunta=pregunta, num=num, total=total)
+    else:
+        # Guardar en BD
         conn = sqlite3.connect(DB_FILE)
         c = conn.cursor()
         c.execute("""
             INSERT INTO respuestas (nombre, correo, telefono, respuestas, tiempos, tiempo_total, ip)
             VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (nombre, correo, telefono, respuestas, tiempos, tiempo_total, ip))
+        """, (
+            session["nombre"],
+            session["correo"],
+            session["telefono"],
+            json.dumps(session["respuestas"]),
+            json.dumps(session["tiempos"]),
+            session["tiempo_total"],
+            request.remote_addr
+        ))
         conn.commit()
         conn.close()
+        session.clear()
         return redirect(url_for("gracias"))
-    except Exception as e:
-        return f"Error al guardar respuestas: {str(e)}"
 
 @app.route("/gracias")
 def gracias():
     return render_template("gracias.html")
 
-# Resultados generales
-@app.route("/resultados", methods=["GET"])
+@app.route("/resultados")
 def resultados():
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute("SELECT DISTINCT nombre FROM respuestas")
-    tecnicos = [row[0] for row in c.fetchall()]
+    c.execute("SELECT id, nombre, correo, telefono, tiempo_total, ip FROM respuestas")
+    rows = c.fetchall()
     conn.close()
-    return render_template("resultados.html", tecnicos=tecnicos)
+    return render_template("resultados.html", resultados=rows)
 
-# Resultados individuales por técnico
-@app.route("/resultados/tecnico", methods=["GET"])
-def resultados_tecnico():
-    nombre = request.args.get("nombre")
+@app.route("/resultado/<int:res_id>")
+def resultado_tecnico(res_id):
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute("""
-        SELECT id, nombre, correo, telefono, respuestas, tiempos, tiempo_total, ip
-        FROM respuestas WHERE nombre = ?
-    """, (nombre,))
-    resultados = c.fetchall()
+    c.execute("SELECT nombre, correo, telefono, respuestas, tiempos, tiempo_total, ip FROM respuestas WHERE id=?", (res_id,))
+    row = c.fetchone()
     conn.close()
-    return render_template("resultados_tecnico.html", resultados=resultados, nombre=nombre)
-
-# Borrar todos los resultados
-@app.route("/borrar_resultados", methods=["POST"])
-def borrar_resultados():
-    conn = sqlite3.connect(DB_FILE)
-    c = conn.cursor()
-    c.execute("DELETE FROM respuestas")
-    conn.commit()
-    conn.close()
-    return redirect(url_for("resultados"))
+    preguntas_db = cargar_preguntas()
+    respuestas = json.loads(row[3])
+    tiempos = json.loads(row[4])
+    detalles = []
+    # Recorrer solo las preguntas que el usuario tuvo en su examen
+    for i, resp in enumerate(respuestas):
+        pregunta = session.get("preguntas", None)
+        # Si el usuario ya no está en sesión, tomar del JSON general
+        if pregunta is None:
+            pregunta = preguntas_db[i]
+        else:
+            pregunta = pregunta[i]
+        # Buscar la opción correcta por índice original
+        idx_correcta = pregunta.get("respuestaCorrecta", 0)
+        correcta = pregunta["opciones"][idx_correcta]
+        acierto = resp == correcta
+        detalles.append({
+            "pregunta": pregunta["pregunta"],
+            "respuesta_usuario": resp,
+            "respuesta_correcta": correcta,
+            "acierto": acierto,
+            "tiempo": tiempos[i] if i < len(tiempos) else 0,
+        })
+    return render_template(
+        "resultados_tecnico.html",
+        nombre=row[0],
+        correo=row[1],
+        telefono=row[2],
+        tiempo_total=row[5],
+        ip=row[6],
+        detalles=detalles
+    )
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
