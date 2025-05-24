@@ -1,42 +1,46 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Pregunta {{ num }} / {{ total }}</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <script>
-    let tiempo = 60;
-    function updateTimer() {
-      if (tiempo <= 0) {
-        document.getElementById('form-examen').submit();
-      } else {
-        document.getElementById('timer').innerText = tiempo;
-        tiempo--;
-        setTimeout(updateTimer, 1000);
-      }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen Técnico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+    let tiempo = {{ tiempo_restante }};
+    let timerInterval;
+    window.onload = function() {
+        document.getElementById("tiempo").value = tiempo;
+        timerInterval = setInterval(function() {
+            tiempo--;
+            document.getElementById("mostrar_tiempo").innerText = tiempo + " segundos";
+            document.getElementById("tiempo").value = tiempo;
+            if (tiempo <= 0) {
+                clearInterval(timerInterval);
+                document.getElementById("examen_form").submit();
+            }
+        }, 1000);
     }
-    function grabarTiempo() {
-      document.getElementById('input-tiempo').value = 60 - tiempo;
-    }
-    window.onload = updateTimer;
-  </script>
+    </script>
 </head>
 <body>
-  <div class="container">
-    <h2>Pregunta {{ num }} de {{ total }}</h2>
-    <div id="timer">60</div>
-    <form id="form-examen" method="POST" onsubmit="grabarTiempo()">
-      <p>{{ pregunta.pregunta }}</p>
-      {% for opcion in pregunta.opciones %}
-        <label>
-          <input type="radio" name="respuesta" value="{{ opcion }}" required>
-          {{ opcion }}
-        </label><br>
-      {% endfor %}
-      <input type="hidden" name="tiempo" id="input-tiempo" value="60">
-      <button type="submit">Siguiente</button>
-    </form>
-  </div>
+    <div class="container">
+        <div class="logo-box">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+        </div>
+        <h2>Pregunta {{ num }} de {{ total }}</h2>
+        <form id="examen_form" method="POST">
+            <div class="pregunta-titulo">{{ pregunta['pregunta'] }}</div>
+            <div class="opciones">
+                {% for opcion in pregunta['opciones_random'] %}
+                <label>
+                    <input type="radio" name="respuesta" value="{{ opcion }}" required> {{ opcion }}
+                </label>
+                {% endfor %}
+            </div>
+            <div class="timer">Tiempo: <span id="mostrar_tiempo">{{ tiempo_restante }} segundos</span></div>
+            <input type="hidden" id="tiempo" name="tiempo" value="{{ tiempo_restante }}">
+            <input type="submit" value="Siguiente">
+        </form>
+    </div>
 </body>
 </html>

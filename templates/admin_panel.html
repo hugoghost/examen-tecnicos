@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Administrador</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Resultados Técnicos</h2>
+        <a href="{{ url_for('admin_logout') }}" class="logout-link">Cerrar sesión</a>
+        <table>
+            <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Teléfono</th>
+                <th>Tiempo Total (s)</th>
+                <th>IP</th>
+                <th>Ver Detalles</th>
+            </tr>
+            {% for r in resultados %}
+            <tr>
+                <td data-label="Nombre">{{ r[1] }}</td>
+                <td data-label="Correo">{{ r[2] }}</td>
+                <td data-label="Teléfono">{{ r[3] }}</td>
+                <td data-label="Tiempo">{{ r[4] }}</td>
+                <td data-label="IP">{{ r[5] }}</td>
+                <td data-label="Detalles"><a href="{{ url_for('admin_detalle', res_id=r[0]) }}">Ver</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>

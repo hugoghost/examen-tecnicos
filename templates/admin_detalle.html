@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle Técnico</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Resultados de {{ nombre }}</h2>
+        <p><b>Correo:</b> {{ correo }}</p>
+        <p><b>Teléfono:</b> {{ telefono }}</p>
+        <p><b>Tiempo total:</b> {{ tiempo_total }} segundos</p>
+        <p><b>IP:</b> {{ ip }}</p>
+        <a href="{{ url_for('admin_panel') }}">&larr; Volver</a>
+        <table>
+            <tr>
+                <th>#</th>
+                <th>Pregunta</th>
+                <th>Tu Respuesta</th>
+                <th>Correcta</th>
+                <th>✓ / ✗</th>
+                <th>Tiempo (s)</th>
+            </tr>
+            {% for d in detalles %}
+            <tr>
+                <td data-label="N°">{{ d.num }}</td>
+                <td data-label="Pregunta">{{ d.pregunta }}</td>
+                <td data-label="Tu Respuesta">{{ d.respuesta_usuario }}</td>
+                <td data-label="Correcta">{{ d.respuesta_correcta }}</td>
+                <td data-label="✓/✗">{% if d.acierto %}✔️{% else %}❌{% endif %}</td>
+                <td data-label="Tiempo">{{ d.tiempo }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>

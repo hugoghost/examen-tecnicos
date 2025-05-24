@@ -1,40 +1,40 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Resultados Técnicos</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados Técnicos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <div class="container">
-    <h1>Resultados Técnicos</h1>
-    <table>
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Correo</th>
-          <th>Teléfono</th>
-          <th>Tiempo Total (s)</th>
-          <th>IP</th>
-          <th>Ver Detalle</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for r in resultados %}
-          <tr>
-            <td>{{ r[1] }}</td>
-            <td>{{ r[2] }}</td>
-            <td>{{ r[3] }}</td>
-            <td>{{ r[4] }}</td>
-            <td>{{ r[5] }}</td>
-            <td>
-              <a href="{{ url_for('resultados_tecnico', res_id=r[0]) }}">Ver</a>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+    <div class="container">
+        <div class="logo-box">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+        </div>
+        <h2>Resultados Técnicos</h2>
+        <a href="{{ url_for('admin_logout') }}" style="float:right; color:#c00;">Cerrar sesión</a>
+        <table>
+            <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Teléfono</th>
+                <th>Tiempo Total (s)</th>
+                <th>IP</th>
+                <th>Ver Detalles</th>
+            </tr>
+            {% for r in resultados %}
+            <tr>
+                <td>{{ r[0] }}</td>
+                <td>{{ r[1] }}</td>
+                <td>{{ r[2] }}</td>
+                <td>{{ r[3] }}</td>
+                <td>{{ r[4] }}</td>
+                <td>{{ r[5] }}</td>
+                <td><a href="{{ url_for('admin_detalle', res_id=r[0]) }}">Ver</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
 </body>
 </html>
